@@ -32,8 +32,34 @@ function dateToTimestamp(date) {
  * Date(2023, 5, 1, 8, 20, 55) => '08:20:55'
  * Date(2015, 10, 20, 23, 15, 1) => '23:15:01'
  */
-function getTime(/* date */) {
-  throw new Error('Not implemented');
+function getTime(date) {
+  const hours = new Date(date);
+  if (
+    hours.getMinutes() < 10 &&
+    hours.getSeconds() < 10 &&
+    hours.getHours() < 10
+  ) {
+    return `0${hours.getHours()}:0${hours.getMinutes()}:0${hours.getSeconds()}`;
+  }
+
+  if (hours.getMinutes() < 10 && hours.getSeconds() < 10) {
+    return `${hours.getHours()}:0${hours.getMinutes()}:0${hours.getSeconds()}`;
+  }
+  if (hours.getMinutes() < 10 && hours.getHours() < 10) {
+    return `0${hours.getHours()}:0${hours.getMinutes()}:${hours.getSeconds()}`;
+  }
+  if (hours.getHours() < 10) {
+    return `0${hours.getHours()}:${hours.getMinutes()}:${hours.getSeconds()}`;
+  }
+
+  if (hours.getMinutes() < 10) {
+    return `${hours.getHours()}:0${hours.getMinutes()}:${hours.getSeconds()}`;
+  }
+  if (hours.getSeconds() < 10) {
+    return `${hours.getHours()}:${hours.getMinutes()}:0${hours.getSeconds()}`;
+  }
+
+  return `${hours.getHours()}:${hours.getMinutes()}:${hours.getSeconds()}`;
 }
 
 /**
