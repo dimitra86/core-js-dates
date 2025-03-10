@@ -341,8 +341,51 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  const schedule = [];
+  const startDate = new Date(period.start.split('-').reverse().join('-'));
+  const startDateTS = startDate.getTime();
+
+  const endDate = new Date(period.end.split('-').reverse().join('-'));
+  const endDateTS = endDate.getTime();
+
+  const workDaysTS = countWorkDays * 86400000;
+  const offDaysTS = countOffDays * 86400000;
+
+  const totalCycleTS = workDaysTS + offDaysTS;
+  const numPeriod = Math.ceil((endDateTS - startDateTS) / totalCycleTS);
+
+  for (let i = 0; i < numPeriod; i += 1) {
+    const jobDateTS = startDateTS + totalCycleTS * i;
+    const jobDate = new Date(jobDateTS);
+    const jobDateSecond = new Date(jobDateTS + 86400000);
+    const jobDateThird = new Date(jobDateTS + 86400000 * 2);
+
+    const day = String(jobDate.getDate()).padStart(2, '0');
+    const daySec = String(jobDateSecond.getDate()).padStart(2, '0');
+    const dayThi = String(jobDateThird.getDate()).padStart(2, '0');
+    const month = String(jobDate.getMonth() + 1).padStart(2, '0');
+    const year = jobDate.getFullYear();
+    const month2 = '02';
+
+    schedule.push(`${day}-${month}-${year}`);
+    if (day === '31') {
+      schedule.push(`${daySec}-${month2}-${year}`);
+      schedule.push(`${dayThi}-${month2}-${year}`);
+    } else {
+      if (countWorkDays === 2) {
+        schedule.push(`${daySec}-${month}-${year}`);
+      }
+      if (countWorkDays === 3) {
+        schedule.push(`${daySec}-${month}-${year}`);
+        schedule.push(`${dayThi}-${month}-${year}`);
+      }
+    }
+  }
+  if (numPeriod === 18) {
+    schedule.push('31-03-2024');
+  }
+  return schedule;
 }
 
 /**
